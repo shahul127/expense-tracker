@@ -30,8 +30,9 @@ api.interceptors.response.use(
       originalRequest._retry = true;  // prevent infinite retry loops
 
       try {
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
         const res = await axios.post(
-          'http://localhost:5000/api/auth/refresh',
+          `${baseURL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
