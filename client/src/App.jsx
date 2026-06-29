@@ -1,43 +1,63 @@
-import { useState,useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import api,{setAccessToken} from './api/axios'
-import './App.css'
-import Login from './pages/Login';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import api, { setAccessToken } from './api/axios';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [user, setUser] = useState(null);
-  const[loading,setLoading]=useState(true);
-  useEffect(()=>{
-  const tryRefresh=async()=>{
-    try{
-    const res=await api.post('/auth/refresh');
-    setAccessToken(res.data.accessToken);
-    setUser({loggedIn:true});
-    }catch(error){
-      setUser(null);
-    }finally{
-      setLoading(false);
-    }
-  };tryRefresh();
-  },[]);
-  if(loading)return <div>loading...</div>
-  
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const tryRefresh = async () => {
+      try {
+        const res = await api.post('/auth/refresh');
+        setAccessToken(res.data.accessToken);
+        setUser({ loggedIn: true });
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    tryRefresh();
+  }, []);
+
+  const handleLogout = async () => {
+    try { await api.post('/auth/logout'); } catch {}
+    setAccessToken(null);
+    setUser(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-500 text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* If not logged in, show Login. If already logged in, redirect to dashboard */}
         <Route
           path="/"
-          element={user ? <Navigate to="/dashboard" /> : <Login onLogin={() => setUser({ loggedIn: true })} />}
+          element={user
+            ? <Navigate to="/dashboard" />
+            : <Login onLogin={() => setUser({ loggedIn: true })} />}
         />
-       
-        </Routes>
- </BrowserRouter>
+        <Route
+          path="/dashboard"
+          element={user
+            ? <Dashboard onLogout={handleLogout} />
+            : <Navigate to="/" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
-  
 }
 
-export default App
+export default App;

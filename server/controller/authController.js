@@ -120,7 +120,7 @@ const refreshAccessToken=async(req,res)=>{
 const logOut=(req,res)=>{
     res.clearCookie('refreshToken',{
          httpOnly:true,
-            secure:process.env.NODE_ENV==='production',
+            secure:process.env.NODE_ENV==='production'?'none':'strict',
             sameSite:'strict',
     }
     );

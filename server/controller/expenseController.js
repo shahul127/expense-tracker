@@ -4,7 +4,7 @@ const createExpense=async(req,res)=>{
  try{
     const {amount,category,description,date,source}=req.body;
     if(!amount){
-        return res.status(400).json({mesage:'Amount is required to add a expense'});
+        return res.status(400).json({message:'Amount is required to add an expense'});
     }
     if(amount<=0){
         return res.status(400).json({message:'amount must be greater that 0'});
@@ -38,7 +38,7 @@ const getExpense=async(req,res)=>{
             if(endDate)filter.date.$lte=new Date(endDate);
         }
         //to get all the expenses
-        const expenses=await Expense.find(filter).sort({Date:-1});
+        const expenses=await Expense.find(filter).sort({date:-1});
         //to calculate the total
         const total=expenses.reduce((sum,exp)=>sum+exp.amount,0);
         //returning the response

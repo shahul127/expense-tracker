@@ -10,7 +10,7 @@ const generateRefreshToken=(userId)=>{
 const setRefreshToken=(res,refreshToken)=>{
         res.cookie('refreshToken',refreshToken,{
             httpOnly:true,
-            secure:process.env.NODE_ENV==='production',
+            secure:process.env.NODE_ENV==='production'?'none':'strict',
             sameSite:'strict',
             maxAge:7*24*60*60*1000
         });
